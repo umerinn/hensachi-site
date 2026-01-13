@@ -60,25 +60,6 @@
     <div class="hr"></div>
     <div id="stats" class="muted"></div>
 
-    <details style="margin-top: 12px;">
-      <summary><b>問題JSONを編集（保存すると反映）</b> <span class="muted">※topicが分野タグ / typeで形式</span></summary>
-      <div style="margin-top:10px;">
-        <div class="row">
-          <button id="validate">JSON検証</button>
-          <button class="primary" id="saveJson">保存して適用</button>
-          <button id="resetJson">JSONを初期状態に戻す</button>
-        </div>
-        <div id="jsonMsg" style="margin:10px 0;"></div>
-        <textarea id="jsonEditor" spellcheck="false"></textarea>
-        <p class="muted">
-          フォーマット：<code>{ "version": "...", "questions": [ ... ] }</code><br/>
-          共通必須：<code>id</code>, <code>subject</code>(国語/数学/英語), <code>topic</code>, <code>type</code>(mcq/reorder), <code>text</code><br/>
-          mcq必須：<code>choices</code>(配列), <code>answerIndex</code>(0始まり)<br/>
-          reorder必須：<code>tokens</code>(配列), <code>answer</code>(正しい並びの配列: tokensのindexを並べる)
-        </p>
-      </div>
-    </details>
-
     <div class="warn muted" style="margin-top:12px;">
       初期は履歴が少ないため偏差値が不安定になりがちです（σが小さい/0になる等）。公開後に安定します。
     </div>
@@ -102,6 +83,12 @@
   <div class="card" id="screen-result" style="display:none;">
     <h2>結果</h2>
     <div id="result"></div>
+     <div id="exam-meta" style="
+    margin-top: 12px;
+    font-size: 13px;
+    color: #555;
+    text-align: center;
+  "></div>
     <div class="hr"></div>
     <div class="row">
       <button class="primary" id="again">もう一度</button>
@@ -281,6 +268,13 @@ function validateQuestionsObj(obj){
 
 /** ===== 実際に使う問題 ===== */
 let QUESTIONS = [];
+let DATA = {};
+
+async function loadQuestions() {
+  const res = await fetch("questions.json");
+  DATA = await res.json();
+  QUESTIONS = DATA.questions;
+}
 
 /** ===== 状態：回答 =====
  * mcq: number (choice index) or null
@@ -547,7 +541,7 @@ function finish(){
       </tbody>
     </table>
 
-    <p class="muted">母集団：直近 ${h.length} 件（デモでは同一ブラウザ内履歴）</p>
+    <p class="muted">母集団A：直近 ${h.length} 件（参考値）</p>
 
     <div class="hr"></div>
 
@@ -563,7 +557,12 @@ function finish(){
     <div class="hr"></div>
     <p><b>一言:</b> ${advice}</p>
   `;
-
+    const metaEl = document.getElementById("exam-meta");
+    if (metaEl) {
+        metaEl.innerHTML = `
+        <div>高2夏レベル｜英語・数学・国語</div>
+        <div>母集団A：直近 ${h.length} 件（参考値）</div>
+        `;}
   show("result");
   renderHomeStats();
 }
@@ -619,9 +618,22 @@ $("resetJson").addEventListener("click", ()=>{
   else setMsg("warn", r.msg);
 });
 
+async function initApp() {
+  try {
+    await loadQuestions(); // questions.json 読み込み
+  } catch (e) {
+    console.error("loadQuestions failed:", e);
+    alert("問題データの読み込みに失敗しました（questions.json を確認）");
+    return;
+  }
+
+  // ここは「以前 起動時に呼んでたもの」を置く
+  renderHomeStats();
+
+  // 最初にホーム画面を見せる関数があるなら呼ぶ
+  // 例: show("home");
+  // 例: show("top");
+}
+
 /** ===== 起動 ===== */
-renderHomeStats();
-initJsonEditor();
-</script>
-</body>
-</html>
+initApp();
