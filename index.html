@@ -187,12 +187,6 @@ function hensachi(x, m, s){
 }
 
 /** ===== メッセージ ===== */
-function setMsg(kind, text){
-  const el = $("jsonMsg");
-  el.className = kind === "ok" ? "ok" : kind === "warn" ? "warn" : "";
-  el.textContent = text || "";
-  if (!text) el.style.display = "none"; else el.style.display = "";
-}
 
 /** ===== 問題JSON ロード/保存 ===== */
 function getStoredQuestionsRaw(){ return localStorage.getItem(LS_QJSON); }
@@ -265,15 +259,6 @@ function validateQuestionsObj(obj){
   return { ok:true, msg:`OK（${obj.questions.length}問）` };
 }
 
-/** ===== 実際に使う問題 ===== */
-let QUESTIONS = [];
-let DATA = {};
-
-async function loadQuestions() {
-  const res = await fetch("questions.json");
-  DATA = await res.json();
-  QUESTIONS = DATA.questions;
-}
 
 /** ===== 状態：回答 =====
  * mcq: number (choice index) or null
@@ -287,19 +272,7 @@ function show(which){
   $("screen-result").style.display = which==="result" ? "" : "none";
 }
 
-function refreshQuestionsFromEditor(){
-  const raw = $("jsonEditor").value;
-  try {
-    const obj = JSON.parse(raw);
-    const v = validateQuestionsObj(obj);
-    if (!v.ok) return { ok:false, msg:v.msg };
-    QUESTIONS = obj.questions;
-    $("qCount").textContent = String(QUESTIONS.length);
-    return { ok:true, msg:`反映しました：${QUESTIONS.length}問` };
-  } catch {
-    return { ok:false, msg:"JSONの構文エラーです（カンマや括弧を確認してください）。" };
-  }
-}
+
 
 function renderHomeStats(){
   $("N").textContent = String(POP_LIMIT);
@@ -315,21 +288,19 @@ function renderHomeStats(){
 }
 
 function start(){
-  const r = refreshQuestionsFromEditor();
-  if (!r.ok){
-    setMsg("warn", "開始できません：" + r.msg);
+  if (!Array.isArray(QUESTIONS) || QUESTIONS.length === 0) {
+    alert("問題データが読み込まれていません（questions.json を確認）");
     return;
   }
-  setMsg("", "");
 
   state.idx = 0;
   state.answers = Array(QUESTIONS.length).fill(null);
 
+  $("qCount").textContent = String(QUESTIONS.length);
   $("total").textContent = String(QUESTIONS.length);
   show("test");
   renderQ();
 }
-
 /** ===== reorder helpers ===== */
 function getReorderAnswer(i){
   const v = state.answers[i];
@@ -567,15 +538,7 @@ function finish(){
 }
 
 /** ===== JSONエディタ初期化 ===== */
-function initJsonEditor(){
-  const raw = getStoredQuestionsRaw();
-  const initialObj = raw ? ( ()=>{ try { return JSON.parse(raw); } catch { return DEFAULT_QUESTIONS_OBJ; } })()
-                         : DEFAULT_QUESTIONS_OBJ;
-  $("jsonEditor").value = JSON.stringify(initialObj, null, 2);
 
-  const r = refreshQuestionsFromEditor();
-  if (r.ok) setMsg("ok", r.msg); else setMsg("warn", r.msg);
-}
 
 /** ===== イベント ===== */
 $("start").addEventListener("click", start);
@@ -588,34 +551,6 @@ $("finish").addEventListener("click", finish);
 $("again").addEventListener("click", start);
 $("home").addEventListener("click", ()=>{ show("home"); });
 
-$("validate").addEventListener("click", ()=>{
-  const r = refreshQuestionsFromEditor();
-  if (r.ok) setMsg("ok", "JSON検証OK：" + r.msg);
-  else setMsg("warn", "JSON検証NG：" + r.msg);
-});
-
-$("saveJson").addEventListener("click", ()=>{
-  const raw = $("jsonEditor").value;
-  try {
-    const obj = JSON.parse(raw);
-    const v = validateQuestionsObj(obj);
-    if (!v.ok){ setMsg("warn", "保存できません：" + v.msg); return; }
-    saveQuestionsRaw(raw);
-    QUESTIONS = obj.questions;
-    $("qCount").textContent = String(QUESTIONS.length);
-    setMsg("ok", "保存しました。反映済み：" + v.msg);
-  } catch {
-    setMsg("warn", "保存できません：JSONの構文エラーです。");
-  }
-});
-
-$("resetJson").addEventListener("click", ()=>{
-  resetQuestionsToDefault();
-  $("jsonEditor").value = JSON.stringify(DEFAULT_QUESTIONS_OBJ, null, 2);
-  const r = refreshQuestionsFromEditor();
-  if (r.ok) setMsg("ok", "初期状態に戻しました：" + r.msg);
-  else setMsg("warn", r.msg);
-});
 
 async function initApp() {
   try {
