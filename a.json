@@ -1,0 +1,582 @@
+{
+  "version": "hs2-summer-kne-55-math-heavy-v1",
+  "questions": [
+    {
+      "id": "en_mcq_01",
+      "subject": "英語",
+      "topic": "時制",
+      "type": "mcq",
+      "text": "She (   ) in Tokyo since 2022.",
+      "choices": ["lives", "has lived", "is living", "lived"],
+      "answerIndex": 1,
+      "difficulty": "basic"
+    },
+    {
+      "id": "en_mcq_02",
+      "subject": "英語",
+      "topic": "完了",
+      "type": "mcq",
+      "text": "I have (   ) finished my homework.",
+      "choices": ["yet", "already", "still", "ever"],
+      "answerIndex": 1,
+      "difficulty": "basic"
+    },
+    {
+      "id": "en_mcq_03",
+      "subject": "英語",
+      "topic": "受動態",
+      "type": "mcq",
+      "text": "This bridge (   ) in 1998.",
+      "choices": ["built", "was built", "is building", "has build"],
+      "answerIndex": 1,
+      "difficulty": "basic"
+    },
+    {
+      "id": "en_mcq_04",
+      "subject": "英語",
+      "topic": "関係詞",
+      "type": "mcq",
+      "text": "The reason (   ) he was late is still unclear.",
+      "choices": ["why", "which", "what", "that"],
+      "answerIndex": 0,
+      "difficulty": "twist"
+    },
+    {
+      "id": "en_mcq_05",
+      "subject": "英語",
+      "topic": "一致",
+      "type": "mcq",
+      "text": "Each of the students (   ) a different answer.",
+      "choices": ["have", "has", "are having", "were having"],
+      "answerIndex": 1,
+      "difficulty": "twist"
+    },
+    {
+      "id": "en_mcq_06",
+      "subject": "英語",
+      "topic": "準動詞",
+      "type": "mcq",
+      "text": "I remember (   ) the door, but now I'm not sure.",
+      "choices": ["to lock", "locking", "lock", "to locking"],
+      "answerIndex": 1,
+      "difficulty": "twist"
+    },
+    {
+      "id": "en_mcq_07",
+      "subject": "英語",
+      "topic": "間接疑問",
+      "type": "mcq",
+      "text": "I don't know (   ) he solved the problem so quickly.",
+      "choices": ["that", "how", "what", "which"],
+      "answerIndex": 1,
+      "difficulty": "twist"
+    },
+    {
+      "id": "en_mcq_08",
+      "subject": "英語",
+      "topic": "語法",
+      "type": "mcq",
+      "text": "He insisted (   ) going there alone.",
+      "choices": ["in", "on", "at", "to"],
+      "answerIndex": 1,
+      "difficulty": "twist"
+    },
+    {
+      "id": "en_mcq_09",
+      "subject": "英語",
+      "topic": "構文",
+      "type": "mcq",
+      "text": "It is important (   ) you to follow the rules.",
+      "choices": ["for", "of", "to", "with"],
+      "answerIndex": 0,
+      "difficulty": "twist"
+    },
+    {
+      "id": "en_mcq_10",
+      "subject": "英語",
+      "topic": "解釈",
+      "type": "mcq",
+      "text": "Choose the best interpretation: “Not until he arrived did we start the meeting.”",
+      "choices": [
+        "彼が到着する前に会議を始めた",
+        "彼が到着するまで会議を始めなかった",
+        "彼が到着したので会議を中止した",
+        "彼が到着したあと会議は終わった"
+      ],
+      "answerIndex": 1,
+      "difficulty": "twist"
+    },
+    {
+      "id": "en_re_01",
+      "subject": "英語",
+      "topic": "整序（SV）",
+      "type": "reorder",
+      "text": "次の語句を並べ替えて、意味が通る英文にしなさい（最後にピリオド）。",
+      "tokens": ["I", "often", "play", "soccer", "after", "school"],
+      "answer": [0, 1, 2, 3, 4, 5],
+      "difficulty": "basic",
+      "gloss": "私は放課後よくサッカーをする"
+    },
+    {
+      "id": "en_re_02",
+      "subject": "英語",
+      "topic": "整序（不定詞）",
+      "type": "reorder",
+      "text": "次の語句を並べ替えて、意味が通る英文にしなさい（最後にピリオド）。",
+      "tokens": ["to", "I", "went", "the", "library", "study"],
+      "answer": [1, 2, 3, 4, 0, 5],
+      "difficulty": "basic",
+      "gloss": "私は勉強するために図書館へ行った"
+    },
+    {
+      "id": "en_re_03",
+      "subject": "英語",
+      "topic": "整序（関係詞）",
+      "type": "reorder",
+      "text": "次の語句を並べ替えて、意味が通る英文にしなさい（最後にピリオド）。",
+      "tokens": ["the", "boy", "who", "is", "running", "is", "my", "brother"],
+      "answer": [0, 1, 2, 3, 4, 5, 6, 7],
+      "difficulty": "basic",
+      "gloss": "走っている少年は私の弟です"
+    },
+    {
+      "id": "en_re_04",
+      "subject": "英語",
+      "topic": "整序（完了）",
+      "type": "reorder",
+      "text": "次の語句を並べ替えて、意味が通る英文にしなさい（最後にピリオド）。",
+      "tokens": ["I", "have", "never", "seen", "such", "a", "beautiful", "view"],
+      "answer": [0, 1, 2, 3, 4, 5, 6, 7],
+      "difficulty": "basic",
+      "gloss": "私はこんなに美しい景色を見たことがない"
+    },
+    {
+      "id": "en_re_05",
+      "subject": "英語",
+      "topic": "整序（語法）",
+      "type": "reorder",
+      "text": "次の語句を並べ替えて、意味が通る英文にしなさい（最後にピリオド）。",
+      "tokens": ["looked", "for", "I", "my", "keys", "everywhere"],
+      "answer": [2, 0, 1, 3, 4, 5],
+      "difficulty": "twist",
+      "gloss": "私は鍵をどこでも探した"
+    },
+    {
+      "id": "en_re_06",
+      "subject": "英語",
+      "topic": "整序（間接疑問）",
+      "type": "reorder",
+      "text": "次の語句を並べ替えて、意味が通る英文にしなさい（最後にピリオド）。",
+      "tokens": ["I", "don't", "know", "where", "she", "lives"],
+      "answer": [0, 1, 2, 3, 4, 5],
+      "difficulty": "twist",
+      "gloss": "私は彼女がどこに住んでいるか知らない"
+    },
+    {
+      "id": "en_re_07",
+      "subject": "英語",
+      "topic": "整序（形式主語）",
+      "type": "reorder",
+      "text": "次の語句を並べ替えて、意味が通る英文にしなさい（最後にピリオド）。",
+      "tokens": ["It", "is", "easy", "to", "make", "mistakes"],
+      "answer": [0, 1, 2, 3, 4, 5],
+      "difficulty": "twist",
+      "gloss": "間違いをするのは簡単だ"
+    },
+    {
+      "id": "en_re_08",
+      "subject": "英語",
+      "topic": "整序（比較）",
+      "type": "reorder",
+      "text": "次の語句を並べ替えて、意味が通る英文にしなさい（最後にピリオド）。",
+      "tokens": ["This", "book", "is", "more", "interesting", "than", "that", "one"],
+      "answer": [0, 1, 2, 3, 4, 5, 6, 7],
+      "difficulty": "basic",
+      "gloss": "この本はあの本より面白い"
+    },
+    {
+      "id": "en_re_09",
+      "subject": "英語",
+      "topic": "整序（倒置）",
+      "type": "reorder",
+      "text": "次の語句を並べ替えて、意味が通る英文にしなさい（最後にピリオド）。",
+      "tokens": ["did", "we", "Not", "until", "he", "arrived", "start", "the", "meeting"],
+      "answer": [2, 3, 4, 5, 0, 1, 6, 7, 8],
+      "difficulty": "twist",
+      "gloss": "彼が到着するまで私たちは会議を始めなかった"
+    },
+    {
+      "id": "en_re_10",
+      "subject": "英語",
+      "topic": "整序（語法）",
+      "type": "reorder",
+      "text": "次の語句を並べ替えて、意味が通る英文にしなさい（最後にピリオド）。",
+      "tokens": ["insisted", "on", "he", "going", "there", "alone"],
+      "answer": [2, 0, 1, 3, 4, 5],
+      "difficulty": "twist",
+      "gloss": "彼はそこへ一人で行くことにこだわった"
+    },
+
+    {
+      "id": "ma01",
+      "subject": "数学",
+      "topic": "計算・式変形",
+      "type": "mcq",
+      "text": "(3 - 5)^2 は？",
+      "choices": ["-4", "4", "8", "16"],
+      "answerIndex": 1,
+      "difficulty": "basic"
+    },
+    {
+      "id": "ma02",
+      "subject": "数学",
+      "topic": "計算・式変形",
+      "type": "mcq",
+      "text": "a≠3 のとき、(a^2 - 9)/(a - 3) を簡単にすると？",
+      "choices": ["a-3", "a+3", "a^2+3", "a^2-3"],
+      "answerIndex": 1,
+      "difficulty": "basic"
+    },
+    {
+      "id": "ma03",
+      "subject": "数学",
+      "topic": "二次関数",
+      "type": "mcq",
+      "text": "y = x^2 - 4x + 1 の頂点は？",
+      "choices": ["(2,-3)", "(2,3)", "(-2,-3)", "(-2,3)"],
+      "answerIndex": 0,
+      "difficulty": "basic"
+    },
+    {
+      "id": "ma04",
+      "subject": "数学",
+      "topic": "二次関数（定義域）",
+      "type": "mcq",
+      "text": "y = x^2 - 2x + a が x≥0 で常に y≥0 となるような a の最小値は？",
+      "choices": ["-1", "0", "1", "2"],
+      "answerIndex": 2,
+      "difficulty": "twist"
+    },
+    {
+      "id": "ma05",
+      "subject": "数学",
+      "topic": "二次方程式（判別式）",
+      "type": "mcq",
+      "text": "x^2 - 2x + k = 0 が実数解をもつための条件は？",
+      "choices": ["k>1", "k<1", "k≤1", "k≥1"],
+      "answerIndex": 2,
+      "difficulty": "twist"
+    },
+    {
+      "id": "ma06",
+      "subject": "数学",
+      "topic": "二次不等式",
+      "type": "mcq",
+      "text": "x^2 - 4x + 3 ≤ 0 を満たす x の範囲は？",
+      "choices": ["x≤1 または x≥3", "1≤x≤3", "x≤-1 または x≥-3", "-3≤x≤-1"],
+      "answerIndex": 1,
+      "difficulty": "basic"
+    },
+    {
+      "id": "ma07",
+      "subject": "数学",
+      "topic": "二次関数（グラフ）",
+      "type": "mcq",
+      "text": "y = - (x-1)^2 + 4 の最大値は？",
+      "choices": ["-4", "1", "3", "4"],
+      "answerIndex": 3,
+      "difficulty": "basic"
+    },
+    {
+      "id": "ma08",
+      "subject": "数学",
+      "topic": "二次関数（交点）",
+      "type": "mcq",
+      "text": "y = x^2 と y = 2x の交点の個数は？",
+      "choices": ["0個", "1個", "2個", "無限個"],
+      "answerIndex": 2,
+      "difficulty": "twist"
+    },
+    {
+      "id": "ma09",
+      "subject": "数学",
+      "topic": "図形と計量",
+      "type": "mcq",
+      "text": "sin 30° は？",
+      "choices": ["1/2", "√2/2", "√3/2", "1"],
+      "answerIndex": 0,
+      "difficulty": "basic"
+    },
+    {
+      "id": "ma10",
+      "subject": "数学",
+      "topic": "図形と計量（余弦定理）",
+      "type": "mcq",
+      "text": "三角形で 2辺が 3,4 でその間の角が 60° のとき、残りの辺の長さは？",
+      "choices": ["1", "√7", "√13", "5"],
+      "answerIndex": 2,
+      "difficulty": "twist"
+    },
+    {
+      "id": "ma11",
+      "subject": "数学",
+      "topic": "図形と方程式（直線）",
+      "type": "mcq",
+      "text": "点(1,2)を通り傾き-3の直線の方程式は？",
+      "choices": ["y=3x-1", "y=-3x+5", "y=-3x-5", "y=-(1/3)x+7/3"],
+      "answerIndex": 1,
+      "difficulty": "basic"
+    },
+    {
+      "id": "ma12",
+      "subject": "数学",
+      "topic": "図形と方程式（円の基本）",
+      "type": "mcq",
+      "text": "x^2 + y^2 = 16 が表す図形は？",
+      "choices": ["直線", "円", "放物線", "双曲線"],
+      "answerIndex": 1,
+      "difficulty": "basic"
+    },
+    {
+      "id": "ma13",
+      "subject": "数学",
+      "topic": "図形と方程式（円と直線）",
+      "type": "mcq",
+      "text": "円 x^2 + y^2 = 25 と直線 y=4 の交点の個数は？",
+      "choices": ["0個", "1個", "2個", "無限個"],
+      "answerIndex": 2,
+      "difficulty": "twist"
+    },
+    {
+      "id": "ma14",
+      "subject": "数学",
+      "topic": "図形と方程式（接線条件）",
+      "type": "mcq",
+      "text": "円 x^2 + y^2 = 9 に接する直線 y = mx + 6 が存在する m の個数は？",
+      "choices": ["0個", "1個", "2個", "無限個"],
+      "answerIndex": 2,
+      "difficulty": "twist"
+    },
+    {
+      "id": "ma15",
+      "subject": "数学",
+      "topic": "図形と方程式（中心と半径）",
+      "type": "mcq",
+      "text": "x^2 + y^2 - 4x + 6y + 4 = 0 の中心は？",
+      "choices": ["(2,-3)", "(-2,3)", "(2,3)", "(-2,-3)"],
+      "answerIndex": 0,
+      "difficulty": "twist"
+    },
+    {
+      "id": "ma16",
+      "subject": "数学",
+      "topic": "確率",
+      "type": "mcq",
+      "text": "コインを2回投げて表がちょうど1回出る確率は？",
+      "choices": ["1/4", "1/2", "3/4", "1"],
+      "answerIndex": 1,
+      "difficulty": "basic"
+    },
+    {
+      "id": "ma17",
+      "subject": "数学",
+      "topic": "確率（条件）",
+      "type": "mcq",
+      "text": "袋に赤2個・青1個の玉がある。戻さず2回取り出す。『1回目が赤だった』とき、2回目も赤である確率は？",
+      "choices": ["1/3", "1/2", "2/3", "3/4"],
+      "answerIndex": 1,
+      "difficulty": "twist"
+    },
+    {
+      "id": "ma18",
+      "subject": "数学",
+      "topic": "確率（排反）",
+      "type": "mcq",
+      "text": "サイコロを1回振る。『2の倍数』または『3の倍数』が出る確率は？",
+      "choices": ["1/3", "1/2", "2/3", "5/6"],
+      "answerIndex": 2,
+      "difficulty": "twist"
+    },
+    {
+      "id": "ma19",
+      "subject": "数学",
+      "topic": "整数の性質",
+      "type": "mcq",
+      "text": "72 と 30 の最大公約数は？",
+      "choices": ["6", "9", "12", "18"],
+      "answerIndex": 2,
+      "difficulty": "basic"
+    },
+    {
+      "id": "ma20",
+      "subject": "数学",
+      "topic": "データの分析",
+      "type": "mcq",
+      "text": "データ 2, 4, 4, 6, 8 の中央値は？",
+      "choices": ["4", "5", "6", "8"],
+      "answerIndex": 0,
+      "difficulty": "basic"
+    },
+    {
+      "id": "ma21",
+      "subject": "数学",
+      "topic": "指数・対数（基礎）",
+      "type": "mcq",
+      "text": "2^3 × 2^5 は？",
+      "choices": ["2^8", "2^15", "4^8", "2^2"],
+      "answerIndex": 0,
+      "difficulty": "basic"
+    },
+    {
+      "id": "ma22",
+      "subject": "数学",
+      "topic": "指数・対数（方程式）",
+      "type": "mcq",
+      "text": "log10 x = 2 のとき x は？",
+      "choices": ["20", "100", "200", "1000"],
+      "answerIndex": 1,
+      "difficulty": "basic"
+    },
+    {
+      "id": "ma23",
+      "subject": "数学",
+      "topic": "三角関数（比から値）",
+      "type": "mcq",
+      "text": "0<θ<π/2 のとき、tanθ = 3/4 なら sinθ は？",
+      "choices": ["3/5", "4/5", "5/3", "5/4"],
+      "answerIndex": 0,
+      "difficulty": "twist"
+    },
+    {
+      "id": "ma24",
+      "subject": "数学",
+      "topic": "数列（和）",
+      "type": "mcq",
+      "text": "等差数列 3, 7, 11, ... の最初の10項の和は？",
+      "choices": ["150", "185", "200", "220"],
+      "answerIndex": 1,
+      "difficulty": "twist"
+    },
+    {
+      "id": "ma25",
+      "subject": "数学",
+      "topic": "微分の考え方（最小値）",
+      "type": "mcq",
+      "text": "y = x^2 - 4x の最小値は？",
+      "choices": ["-4", "-2", "0", "4"],
+      "answerIndex": 0,
+      "difficulty": "twist"
+    },
+
+    {
+      "id": "jp01",
+      "subject": "国語",
+      "topic": "語彙",
+      "type": "mcq",
+      "text": "「妥当」の意味として最も近いものは？",
+      "choices": ["無関係", "適切", "不可能", "極端"],
+      "answerIndex": 1,
+      "difficulty": "basic"
+    },
+    {
+      "id": "jp02",
+      "subject": "国語",
+      "topic": "語彙",
+      "type": "mcq",
+      "text": "「迅速」の意味として最も近いものは？",
+      "choices": ["ゆっくり", "すばやい", "慎重", "ややこしい"],
+      "answerIndex": 1,
+      "difficulty": "basic"
+    },
+    {
+      "id": "jp03",
+      "subject": "国語",
+      "topic": "接続語",
+      "type": "mcq",
+      "text": "文脈に合う接続語は？「計画を立てた。＿＿＿、実行できなかった。」",
+      "choices": ["つまり", "しかし", "たとえば", "また"],
+      "answerIndex": 1,
+      "difficulty": "basic"
+    },
+    {
+      "id": "jp04",
+      "subject": "国語",
+      "topic": "指示語",
+      "type": "mcq",
+      "text": "指示語「これ」「それ」「あれ」が指す内容を特定する最も基本的な手がかりは？",
+      "choices": ["本文の長さ", "指示語の前後の文脈", "筆者名", "題名の字数"],
+      "answerIndex": 1,
+      "difficulty": "basic"
+    },
+    {
+      "id": "jp05",
+      "subject": "国語",
+      "topic": "本文つき（要約）",
+      "type": "mcq",
+      "text": "【本文】\n努力は大切だが、努力の方向がずれていると成果は出にくい。まず現状を把握し、必要な課題を選ぶことが、結果的に近道になる。\n\n問：本文の要旨として最も適切なのは？",
+      "choices": [
+        "努力さえすれば方向は考えなくてよい",
+        "成果のためには、課題選びと現状把握が重要だ",
+        "遠回りしてでも努力量を増やすべきだ",
+        "努力よりも才能が最も重要だ"
+      ],
+      "answerIndex": 1,
+      "difficulty": "twist"
+    },
+    {
+      "id": "jp06",
+      "subject": "国語",
+      "topic": "本文つき（根拠）",
+      "type": "mcq",
+      "text": "【本文】\nSNSでは短い言葉が拡散されやすい。そのため、文脈が省かれた断片だけが独り歩きし、誤解が生まれることがある。発信するときは、前提や条件を添える配慮が必要だ。\n\n問：筆者が「配慮が必要だ」と述べる理由として最も適切なのは？",
+      "choices": [
+        "SNSでは長文しか投稿できないから",
+        "断片だけが広まり誤解が生まれやすいから",
+        "誤解は必ず解けるものだから",
+        "前提や条件は誰でも自動的に理解できるから"
+      ],
+      "answerIndex": 1,
+      "difficulty": "twist"
+    },
+    {
+      "id": "jp07",
+      "subject": "国語",
+      "topic": "古文（助動詞）",
+      "type": "mcq",
+      "text": "助動詞「けり」の主な意味として最も適切なのは？",
+      "choices": ["推量", "過去・詠嘆", "完了", "可能"],
+      "answerIndex": 1,
+      "difficulty": "basic"
+    },
+    {
+      "id": "jp08",
+      "subject": "国語",
+      "topic": "古文（助動詞）",
+      "type": "mcq",
+      "text": "助動詞「つ」「ぬ」に共通しやすい意味として最も適切なのは？",
+      "choices": ["完了", "打消", "推量", "受身"],
+      "answerIndex": 0,
+      "difficulty": "basic"
+    },
+    {
+      "id": "jp09",
+      "subject": "国語",
+      "topic": "古文（敬語）",
+      "type": "mcq",
+      "text": "古文で敬語を見たとき、まず行うべき作業として最も適切なのは？",
+      "choices": ["音読する", "敬語の対象（主語）を特定する", "漢字に直す", "現代語に置き換えずに読む"],
+      "answerIndex": 1,
+      "difficulty": "twist"
+    },
+    {
+      "id": "jp10",
+      "subject": "国語",
+      "topic": "漢文（句形）",
+      "type": "mcq",
+      "text": "漢文の「不〜」が表す基本は？",
+      "choices": ["疑問", "否定", "反語", "命令"],
+      "answerIndex": 1,
+      "difficulty": "basic"
+    }
+  ]
+}
