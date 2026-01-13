@@ -99,8 +99,8 @@
 
 <script>
 /** ===== 設定 ===== */
-window.QUESTIONS = [];
-window.DATA = { version: "", questions: [] };
+let QUESTIONS = [];
+let DATA = { version: "", questions: [] };
 const POP_LIMIT = 200;
 const LS_SCORES = "hs_kne_scores_v3";
 const LS_QJSON  = "hs_kne_questions_v3";
@@ -199,8 +199,9 @@ async function loadQuestions() {
     throw new Error(`questions.json fetch failed: ${res.status}`);
   }
   const json = await res.json();
-  window.DATA = json;
-  window.QUESTIONS = json.questions || [];
+  DATA = json;
+　QUESTIONS = json.questions || [];
+
 }
 
 /** ===== バリデーション ===== */
