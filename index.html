@@ -1,0 +1,627 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>高校基礎テスト（高2夏：国数英）｜偏差値</title>
+  <style>
+    body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; margin: 24px; line-height: 1.6; }
+    .wrap { max-width: 980px; margin: 0 auto; }
+    .card { border: 1px solid #ddd; border-radius: 14px; padding: 18px; margin: 14px 0; }
+    .row { display:flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    button { padding: 10px 14px; border-radius: 10px; border: 1px solid #ccc; background: #fff; cursor: pointer; }
+    button.primary { border-color:#111; background:#111; color:#fff; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .muted { color:#666; font-size: 0.95em; }
+    .big { font-size: 1.45em; font-weight: 800; }
+    .q { padding: 14px; border: 1px solid #eee; border-radius: 12px; margin: 12px 0; }
+    .grid { display:grid; grid-template-columns: 1fr; gap: 10px; }
+    label { display:block; padding: 8px 10px; border: 1px solid #eee; border-radius: 10px; cursor:pointer; }
+    input[type="radio"] { margin-right: 8px; }
+    .hr { height: 1px; background:#eee; margin: 16px 0; }
+    table { width:100%; border-collapse: collapse; }
+    th, td { text-align:left; padding: 8px; border-bottom: 1px solid #eee; vertical-align: top; }
+    .pill { display:inline-block; padding: 2px 10px; border:1px solid #ddd; border-radius: 999px; font-size: 0.9em; }
+    .warn { background:#fff7e6; border:1px solid #ffd591; padding: 10px 12px; border-radius: 12px; }
+    .ok { background:#f6ffed; border:1px solid #b7eb8f; padding: 10px 12px; border-radius: 12px; }
+    textarea { width: 100%; min-height: 280px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; font-size: 12.5px; }
+    details summary { cursor: pointer; }
+
+    /* reorder UI */
+    .tokens { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+    .chip {
+      border:1px solid #ddd; border-radius: 999px;
+      padding: 6px 10px; cursor:pointer; user-select:none;
+      background:#fff;
+    }
+    .chip.used { opacity: 0.45; cursor: not-allowed; }
+    .answerBox {
+      border:1px dashed #ccc; border-radius: 12px;
+      padding: 10px; min-height: 44px;
+      display:flex; gap:8px; flex-wrap:wrap; align-items:center;
+      background:#fafafa;
+    }
+    .miniBtn { padding: 8px 10px; border-radius: 10px; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>高校基礎テスト（高2夏：国語・数学・英語）</h1>
+    <p class="muted">
+      偏差値（A方式）は「サイト内受験者データ（母集団）」から算出します。ここではデモとして同一ブラウザ内履歴を母集団にします（本番はサーバー保存に差し替え）。
+    </p>
+    <div class="row">
+      <button class="primary" id="start">テスト開始</button>
+      <button id="resetScores">受験履歴リセット</button>
+      <span class="pill">母集団：直近 <b id="N">200</b> 件</span>
+      <span class="pill">問題数: <b id="qCount">-</b></span>
+    </div>
+    <div class="hr"></div>
+    <div id="stats" class="muted"></div>
+
+    <details style="margin-top: 12px;">
+      <summary><b>問題JSONを編集（保存すると反映）</b> <span class="muted">※topicが分野タグ / typeで形式</span></summary>
+      <div style="margin-top:10px;">
+        <div class="row">
+          <button id="validate">JSON検証</button>
+          <button class="primary" id="saveJson">保存して適用</button>
+          <button id="resetJson">JSONを初期状態に戻す</button>
+        </div>
+        <div id="jsonMsg" style="margin:10px 0;"></div>
+        <textarea id="jsonEditor" spellcheck="false"></textarea>
+        <p class="muted">
+          フォーマット：<code>{ "version": "...", "questions": [ ... ] }</code><br/>
+          共通必須：<code>id</code>, <code>subject</code>(国語/数学/英語), <code>topic</code>, <code>type</code>(mcq/reorder), <code>text</code><br/>
+          mcq必須：<code>choices</code>(配列), <code>answerIndex</code>(0始まり)<br/>
+          reorder必須：<code>tokens</code>(配列), <code>answer</code>(正しい並びの配列: tokensのindexを並べる)
+        </p>
+      </div>
+    </details>
+
+    <div class="warn muted" style="margin-top:12px;">
+      初期は履歴が少ないため偏差値が不安定になりがちです（σが小さい/0になる等）。公開後に安定します。
+    </div>
+  </div>
+
+  <div class="card" id="screen-test" style="display:none;">
+    <div class="row">
+      <div class="muted">問題 <span id="idx"></span>/<span id="total"></span></div>
+      <div class="muted">科目: <b id="subj"></b></div>
+      <div class="muted">分野: <b id="topic"></b></div>
+      <div class="muted">形式: <b id="qtype"></b></div>
+    </div>
+    <div id="qbox" class="q"></div>
+    <div class="row">
+      <button id="prev">戻る</button>
+      <button class="primary" id="next">次へ</button>
+      <button id="finish">採点する</button>
+    </div>
+  </div>
+
+  <div class="card" id="screen-result" style="display:none;">
+    <h2>結果</h2>
+    <div id="result"></div>
+    <div class="hr"></div>
+    <div class="row">
+      <button class="primary" id="again">もう一度</button>
+      <button id="home">トップへ</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/** ===== 設定 ===== */
+const POP_LIMIT = 200;
+const LS_SCORES = "hs_kne_scores_v3";
+const LS_QJSON  = "hs_kne_questions_v3";
+
+/** ===== 初期問題JSON（英語：並べ替え入りサンプル） ===== */
+const DEFAULT_QUESTIONS_OBJ = {
+  version: "hs2-summer-mix-v1",
+  questions: [
+    // --- 英語 mcq ---
+    { id:"en_mcq_01", subject:"英語", topic:"時制", type:"mcq",
+      text:"She (   ) in Tokyo since 2022.",
+      choices:["lives","has lived","is living","lived"], answerIndex:1, difficulty:"basic" },
+
+    { id:"en_mcq_02", subject:"英語", topic:"関係詞", type:"mcq",
+      text:"This is the book (   ) I told you about.",
+      choices:["who","which","where","when"], answerIndex:1, difficulty:"basic" },
+
+    { id:"en_mcq_03", subject:"英語", topic:"一致", type:"mcq",
+      text:"Each of the students (   ) a different answer.",
+      choices:["have","has","are having","were having"], answerIndex:1, difficulty:"twist" },
+
+    // --- 英語 reorder（語句整序） ---
+    // answer は tokens の index を正しい順に並べた配列
+    { id:"en_re_01", subject:"英語", topic:"不定詞", type:"reorder",
+      text:"次の語句を並べ替えて、意味が通る英文にしなさい（最後にピリオド）。",
+      tokens:["to","I","went","the","library","study"],
+      answer:[1,3,4,2,0,5],
+      difficulty:"basic",
+      gloss:"私は勉強するために図書館へ行った"
+    },
+
+    { id:"en_re_02", subject:"英語", topic:"関係詞", type:"reorder",
+      text:"次の語句を並べ替えて、意味が通る英文にしなさい（最後にピリオド）。",
+      tokens:["the","boy","is","who","running","my","brother"],
+      answer:[0,1,3,2,4,5,6],
+      difficulty:"basic",
+      gloss:"走っている少年は私の弟です"
+    },
+
+    { id:"en_re_03", subject:"英語", topic:"語法", type:"reorder",
+      text:"次の語句を並べ替えて、意味が通る英文にしなさい（最後にピリオド）。",
+      tokens:["insisted","on","he","going","alone"],
+      answer:[2,0,1,3,4],
+      difficulty:"twist",
+      gloss:"彼は一人で行くことにこだわった"
+    },
+
+    { id:"en_re_04", subject:"英語", topic:"倒置", type:"reorder",
+      text:"次の語句を並べ替えて、意味が通る英文にしなさい（最後にピリオド）。",
+      tokens:["did","we","Not","until","he","arrived","start"],
+      answer:[2,3,4,5,0,1,6],
+      difficulty:"twist",
+      gloss:"彼が到着するまで私たちは始めなかった"
+    },
+
+    // --- 例として国数も少し（空でもOK） ---
+    { id:"ma1", subject:"数学", topic:"二次関数", type:"mcq",
+      text:"y = (x-2)^2 の頂点は？",
+      choices:["(2,0)","(-2,0)","(0,2)","(0,-2)"], answerIndex:0 },
+
+    { id:"jp1", subject:"国語", topic:"接続語", type:"mcq",
+      text:"文脈に合う接続語は？「雨が降っている。＿＿＿、傘を持っていこう。」",
+      choices:["しかし","だから","たとえば","ところが"], answerIndex:1 }
+  ]
+};
+
+/** ===== DOM ===== */
+const $ = (id)=>document.getElementById(id);
+
+/** ===== 保存/統計 ===== */
+function loadScores(){ try { return JSON.parse(localStorage.getItem(LS_SCORES) || "[]"); } catch { return []; } }
+function saveScores(arr){ localStorage.setItem(LS_SCORES, JSON.stringify(arr)); }
+function resetScores(){ localStorage.removeItem(LS_SCORES); }
+
+function mean(arr){ return arr.reduce((a,b)=>a+b,0)/arr.length; }
+function std(arr){
+  const m = mean(arr);
+  const v = arr.reduce((s,x)=>s+(x-m)*(x-m),0)/arr.length;
+  return Math.sqrt(v);
+}
+function hensachi(x, m, s){
+  if (!isFinite(s) || s <= 1e-9) return 50;
+  return 50 + 10 * (x - m) / s;
+}
+
+/** ===== メッセージ ===== */
+function setMsg(kind, text){
+  const el = $("jsonMsg");
+  el.className = kind === "ok" ? "ok" : kind === "warn" ? "warn" : "";
+  el.textContent = text || "";
+  if (!text) el.style.display = "none"; else el.style.display = "";
+}
+
+/** ===== 問題JSON ロード/保存 ===== */
+function getStoredQuestionsRaw(){ return localStorage.getItem(LS_QJSON); }
+function saveQuestionsRaw(raw){ localStorage.setItem(LS_QJSON, raw); }
+function resetQuestionsToDefault(){ localStorage.removeItem(LS_QJSON); }
+
+function loadQuestionsObj(){
+  const raw = getStoredQuestionsRaw();
+  if (!raw) return DEFAULT_QUESTIONS_OBJ;
+  try {
+    const obj = JSON.parse(raw);
+    const validated = validateQuestionsObj(obj);
+    if (!validated.ok) return DEFAULT_QUESTIONS_OBJ;
+    return obj;
+  } catch {
+    return DEFAULT_QUESTIONS_OBJ;
+  }
+}
+
+/** ===== バリデーション ===== */
+function validateQuestionsObj(obj){
+  const fail = (msg)=>({ ok:false, msg });
+  if (!obj || typeof obj !== "object") return fail("トップがオブジェクトではありません。");
+  if (!Array.isArray(obj.questions)) return fail("questions が配列ではありません。");
+  if (obj.questions.length < 1) return fail("questions が空です。");
+
+  const allowedSubjects = new Set(["国語","数学","英語"]);
+  const allowedTypes = new Set(["mcq","reorder"]);
+  const ids = new Set();
+
+  for (let i=0;i<obj.questions.length;i++){
+    const q = obj.questions[i];
+    const prefix = `questions[${i}]`;
+    if (!q || typeof q !== "object") return fail(`${prefix} がオブジェクトではありません。`);
+
+    for (const k of ["id","subject","topic","type","text"]){
+      if (!(k in q)) return fail(`${prefix}.${k} がありません。`);
+    }
+    if (typeof q.id !== "string" || q.id.trim()==="") return fail(`${prefix}.id は非空文字列にしてください。`);
+    if (ids.has(q.id)) return fail(`${prefix}.id が重複しています: ${q.id}`);
+    ids.add(q.id);
+
+    if (!allowedSubjects.has(q.subject)) return fail(`${prefix}.subject は 国語/数学/英語 のいずれかにしてください。`);
+    if (typeof q.topic !== "string" || q.topic.trim()==="") return fail(`${prefix}.topic は非空文字列にしてください。`);
+    if (!allowedTypes.has(q.type)) return fail(`${prefix}.type は mcq / reorder のいずれかにしてください。`);
+    if (typeof q.text !== "string" || q.text.trim()==="") return fail(`${prefix}.text は非空文字列にしてください。`);
+
+    if (q.type === "mcq"){
+      for (const k of ["choices","answerIndex"]){
+        if (!(k in q)) return fail(`${prefix}.${k} がありません（mcq必須）。`);
+      }
+      if (!Array.isArray(q.choices) || q.choices.length < 2) return fail(`${prefix}.choices は2個以上の配列にしてください。`);
+      if (!Number.isInteger(q.answerIndex)) return fail(`${prefix}.answerIndex は整数（0始まり）にしてください。`);
+      if (q.answerIndex < 0 || q.answerIndex >= q.choices.length) return fail(`${prefix}.answerIndex が choices の範囲外です。`);
+    }
+
+    if (q.type === "reorder"){
+      for (const k of ["tokens","answer"]){
+        if (!(k in q)) return fail(`${prefix}.${k} がありません（reorder必須）。`);
+      }
+      if (!Array.isArray(q.tokens) || q.tokens.length < 3) return fail(`${prefix}.tokens は3個以上の配列にしてください。`);
+      if (!Array.isArray(q.answer) || q.answer.length !== q.tokens.length) return fail(`${prefix}.answer は tokens と同じ長さの配列にしてください。`);
+      const n = q.tokens.length;
+      const seen = new Set();
+      for (const idx of q.answer){
+        if (!Number.isInteger(idx)) return fail(`${prefix}.answer は整数の配列にしてください。`);
+        if (idx < 0 || idx >= n) return fail(`${prefix}.answer に範囲外のindexがあります。`);
+        if (seen.has(idx)) return fail(`${prefix}.answer に重複indexがあります。`);
+        seen.add(idx);
+      }
+    }
+  }
+  return { ok:true, msg:`OK（${obj.questions.length}問）` };
+}
+
+/** ===== 実際に使う問題 ===== */
+let QUESTIONS = [];
+
+/** ===== 状態：回答 =====
+ * mcq: number (choice index) or null
+ * reorder: number[] (tokens index order) or null
+ */
+let state = { idx: 0, answers: [] };
+
+/** ===== UI ===== */
+function show(which){
+  $("screen-test").style.display   = which==="test"   ? "" : "none";
+  $("screen-result").style.display = which==="result" ? "" : "none";
+}
+
+function refreshQuestionsFromEditor(){
+  const raw = $("jsonEditor").value;
+  try {
+    const obj = JSON.parse(raw);
+    const v = validateQuestionsObj(obj);
+    if (!v.ok) return { ok:false, msg:v.msg };
+    QUESTIONS = obj.questions;
+    $("qCount").textContent = String(QUESTIONS.length);
+    return { ok:true, msg:`反映しました：${QUESTIONS.length}問` };
+  } catch {
+    return { ok:false, msg:"JSONの構文エラーです（カンマや括弧を確認してください）。" };
+  }
+}
+
+function renderHomeStats(){
+  $("N").textContent = String(POP_LIMIT);
+
+  const h = loadScores();
+  if (h.length === 0){
+    $("stats").textContent = "受験履歴：0件（初期は偏差値が50寄りになります）";
+    return;
+  }
+  const jp = h.map(x=>x.jp), ma=h.map(x=>x.ma), en=h.map(x=>x.en), tt=h.map(x=>x.total);
+  $("stats").textContent =
+    `受験履歴：${h.length}件 / 総合 平均=${mean(tt).toFixed(2)} σ=${std(tt).toFixed(2)}（国語 平均=${mean(jp).toFixed(2)}、数学 平均=${mean(ma).toFixed(2)}、英語 平均=${mean(en).toFixed(2)}）`;
+}
+
+function start(){
+  const r = refreshQuestionsFromEditor();
+  if (!r.ok){
+    setMsg("warn", "開始できません：" + r.msg);
+    return;
+  }
+  setMsg("", "");
+
+  state.idx = 0;
+  state.answers = Array(QUESTIONS.length).fill(null);
+
+  $("total").textContent = String(QUESTIONS.length);
+  show("test");
+  renderQ();
+}
+
+/** ===== reorder helpers ===== */
+function getReorderAnswer(i){
+  const v = state.answers[i];
+  return Array.isArray(v) ? v : [];
+}
+function setReorderAnswer(i, arr){
+  state.answers[i] = arr;
+}
+
+/** ===== 問題描画 ===== */
+function renderQ(){
+  const q = QUESTIONS[state.idx];
+  $("idx").textContent = String(state.idx+1);
+  $("subj").textContent = q.subject;
+  $("topic").textContent = q.topic;
+  $("qtype").textContent = q.type === "mcq" ? "4択" : "語句整序";
+
+  if (q.type === "mcq"){
+    const picked = (typeof state.answers[state.idx] === "number") ? state.answers[state.idx] : null;
+    $("qbox").innerHTML = `
+      <div class="muted">${q.subject} / ${q.topic} / mcq</div>
+      <div class="big">${q.text}</div>
+      <div class="grid" style="margin-top:10px;">
+        ${q.choices.map((c,i)=>`
+          <label>
+            <input type="radio" name="choice" value="${i}" ${picked===i?"checked":""}/>
+            ${c}
+          </label>
+        `).join("")}
+      </div>
+    `;
+    document.querySelectorAll('input[name="choice"]').forEach(el=>{
+      el.addEventListener("change", (e)=>{
+        state.answers[state.idx] = Number(e.target.value);
+      });
+    });
+  }
+
+  if (q.type === "reorder"){
+    const current = getReorderAnswer(state.idx);
+    const used = new Set(current);
+
+    const answerChips = current.map((tokenIdx, pos)=>{
+      const t = q.tokens[tokenIdx];
+      return `<span class="chip" data-pos="${pos}" title="クリックで取り消し">${t}</span>`;
+    }).join("");
+
+    const tokenChips = q.tokens.map((t,i)=>{
+      const isUsed = used.has(i);
+      return `<span class="chip ${isUsed?"used":""}" data-token="${i}" title="${isUsed?"選択済み":"クリックで追加"}">${t}</span>`;
+    }).join("");
+
+    $("qbox").innerHTML = `
+      <div class="muted">${q.subject} / ${q.topic} / reorder</div>
+      <div class="big">${q.text}</div>
+
+      <div class="muted" style="margin-top:8px;">あなたの並び（クリックで取り消し）</div>
+      <div class="answerBox" id="answerBox">
+        ${answerChips || '<span class="muted">ここに並びが表示されます</span>'}
+      </div>
+
+      <div class="row" style="margin-top:10px;">
+        <button class="miniBtn" id="re_back">1つ戻す</button>
+        <button class="miniBtn" id="re_clear">クリア</button>
+      </div>
+
+      <div class="muted" style="margin-top:10px;">語句（クリックで追加）</div>
+      <div class="tokens" id="tokensBox">${tokenChips}</div>
+
+      ${q.gloss ? `<div class="muted" style="margin-top:10px;">意味：${q.gloss}</div>` : ""}
+    `;
+
+    // tokens -> add
+    $("tokensBox").querySelectorAll(".chip").forEach(el=>{
+      el.addEventListener("click", ()=>{
+        const tokenIdx = Number(el.dataset.token);
+        if (!Number.isInteger(tokenIdx)) return;
+        const cur = getReorderAnswer(state.idx);
+        if (cur.includes(tokenIdx)) return;
+        if (cur.length >= q.tokens.length) return;
+        setReorderAnswer(state.idx, [...cur, tokenIdx]);
+        renderQ();
+      });
+    });
+
+    // answer -> remove by clicking chip
+    $("answerBox").querySelectorAll(".chip").forEach(el=>{
+      el.addEventListener("click", ()=>{
+        const pos = Number(el.dataset.pos);
+        const cur = getReorderAnswer(state.idx);
+        if (!Number.isInteger(pos) || pos < 0 || pos >= cur.length) return;
+        const next = cur.slice(0,pos).concat(cur.slice(pos+1));
+        setReorderAnswer(state.idx, next);
+        renderQ();
+      });
+    });
+
+    // back/clear
+    $("re_back").addEventListener("click", ()=>{
+      const cur = getReorderAnswer(state.idx);
+      if (cur.length === 0) return;
+      setReorderAnswer(state.idx, cur.slice(0, -1));
+      renderQ();
+    });
+    $("re_clear").addEventListener("click", ()=>{
+      setReorderAnswer(state.idx, []);
+      renderQ();
+    });
+  }
+
+  $("prev").disabled = state.idx === 0;
+  $("next").disabled = state.idx === QUESTIONS.length - 1;
+}
+
+/** ===== 採点（科目・分野別） ===== */
+function isCorrect(q, answer){
+  if (q.type === "mcq"){
+    return (typeof answer === "number") && answer === q.answerIndex;
+  }
+  if (q.type === "reorder"){
+    if (!Array.isArray(answer)) return false;
+    if (answer.length !== q.answer.length) return false;
+    for (let i=0;i<answer.length;i++){
+      if (answer[i] !== q.answer[i]) return false;
+    }
+    return true;
+  }
+  return false;
+}
+
+function scoreDetailed(){
+  const bySubject = { 国語:{c:0,t:0}, 数学:{c:0,t:0}, 英語:{c:0,t:0} };
+  const byTopic = {}; // key -> {subject, topic, c,t}
+
+  QUESTIONS.forEach((q,i)=>{
+    const ok = isCorrect(q, state.answers[i]);
+
+    bySubject[q.subject].t++;
+    if (ok) bySubject[q.subject].c++;
+
+    const key = `${q.subject}::${q.topic}`;
+    if (!byTopic[key]) byTopic[key] = { subject:q.subject, topic:q.topic, c:0, t:0 };
+    byTopic[key].t++;
+    if (ok) byTopic[key].c++;
+  });
+
+  const jp = bySubject["国語"].c;
+  const ma = bySubject["数学"].c;
+  const en = bySubject["英語"].c;
+  const total = jp + ma + en;
+
+  return { bySubject, byTopic, jp, ma, en, total };
+}
+
+function pushScoreHistory(entry){
+  const h = loadScores();
+  h.push(entry);
+  const trimmed = h.slice(-POP_LIMIT);
+  saveScores(trimmed);
+  return trimmed;
+}
+
+function finish(){
+  const s = scoreDetailed();
+  const h = pushScoreHistory({ jp:s.jp, ma:s.ma, en:s.en, total:s.total, ts: Date.now() });
+
+  const jpArr = h.map(x=>x.jp), maArr=h.map(x=>x.ma), enArr=h.map(x=>x.en), ttArr=h.map(x=>x.total);
+  const jpM=mean(jpArr), jpS=std(jpArr);
+  const maM=mean(maArr), maS=std(maArr);
+  const enM=mean(enArr), enS=std(enArr);
+  const ttM=mean(ttArr), ttS=std(ttArr);
+
+  const jpH = hensachi(s.jp, jpM, jpS);
+  const maH = hensachi(s.ma, maM, maS);
+  const enH = hensachi(s.en, enM, enS);
+  const ttH = hensachi(s.total, ttM, ttS);
+
+  const topicRows = Object.values(s.byTopic)
+    .map(x=>({ ...x, rate: x.t ? x.c/x.t : 0 }))
+    .sort((a,b)=> (a.rate - b.rate) || (b.t - a.t));
+  const weakTop3 = topicRows.slice(0,3);
+
+  const topicTable = topicRows.map(x=>{
+    const pct = (x.rate*100).toFixed(0);
+    return `<tr><td>${x.subject}</td><td>${x.topic}</td><td>${x.c}/${x.t} (${pct}%)</td></tr>`;
+  }).join("");
+
+  const weakList = weakTop3.map(x=>{
+    const pct = (x.t ? (x.c/x.t*100) : 0).toFixed(0);
+    return `<li>${x.subject}：<b>${x.topic}</b>（${x.c}/${x.t}・${pct}%）</li>`;
+  }).join("");
+
+  const advice =
+    ttH >= 60 ? "基礎はかなり安定。英語は“語法・整序・解釈”の精度を上げると伸びやすい。" :
+    ttH >= 50 ? "平均的。弱点TOP3を優先して、整序は“骨格(SV)→修飾”の順で反復がおすすめ。" :
+                "基礎の穴が目立つ段階。まずは文法・語法の定番と整序の型をセットで固めよう。";
+
+  $("result").innerHTML = `
+    <p class="big">総合偏差値（A方式）: ${ttH.toFixed(1)}</p>
+
+    <table>
+      <thead><tr><th>科目</th><th>得点</th><th>偏差値</th><th>母集団 平均/σ</th></tr></thead>
+      <tbody>
+        <tr><td>国語</td><td>${s.jp}/${s.bySubject["国語"].t}</td><td>${jpH.toFixed(1)}</td><td>${jpM.toFixed(2)} / ${jpS.toFixed(2)}</td></tr>
+        <tr><td>数学</td><td>${s.ma}/${s.bySubject["数学"].t}</td><td>${maH.toFixed(1)}</td><td>${maM.toFixed(2)} / ${maS.toFixed(2)}</td></tr>
+        <tr><td>英語</td><td>${s.en}/${s.bySubject["英語"].t}</td><td>${enH.toFixed(1)}</td><td>${enM.toFixed(2)} / ${enS.toFixed(2)}</td></tr>
+        <tr><td><b>総合</b></td><td><b>${s.total}/${QUESTIONS.length}</b></td><td><b>${ttH.toFixed(1)}</b></td><td>${ttM.toFixed(2)} / ${ttS.toFixed(2)}</td></tr>
+      </tbody>
+    </table>
+
+    <p class="muted">母集団：直近 ${h.length} 件（デモでは同一ブラウザ内履歴）</p>
+
+    <div class="hr"></div>
+
+    <h3>弱点TOP3（分野別）</h3>
+    <ul>${weakList || "<li>まだ分野別データがありません</li>"}</ul>
+
+    <h3>分野別 正答率（低い順）</h3>
+    <table>
+      <thead><tr><th>科目</th><th>分野(topic)</th><th>正答率</th></tr></thead>
+      <tbody>${topicTable}</tbody>
+    </table>
+
+    <div class="hr"></div>
+    <p><b>一言:</b> ${advice}</p>
+  `;
+
+  show("result");
+  renderHomeStats();
+}
+
+/** ===== JSONエディタ初期化 ===== */
+function initJsonEditor(){
+  const raw = getStoredQuestionsRaw();
+  const initialObj = raw ? ( ()=>{ try { return JSON.parse(raw); } catch { return DEFAULT_QUESTIONS_OBJ; } })()
+                         : DEFAULT_QUESTIONS_OBJ;
+  $("jsonEditor").value = JSON.stringify(initialObj, null, 2);
+
+  const r = refreshQuestionsFromEditor();
+  if (r.ok) setMsg("ok", r.msg); else setMsg("warn", r.msg);
+}
+
+/** ===== イベント ===== */
+$("start").addEventListener("click", start);
+$("resetScores").addEventListener("click", ()=>{ resetScores(); renderHomeStats(); alert("受験履歴をリセットしました"); });
+
+$("prev").addEventListener("click", ()=>{ if (state.idx>0){ state.idx--; renderQ(); } });
+$("next").addEventListener("click", ()=>{ if (state.idx<QUESTIONS.length-1){ state.idx++; renderQ(); } });
+$("finish").addEventListener("click", finish);
+
+$("again").addEventListener("click", start);
+$("home").addEventListener("click", ()=>{ show("home"); });
+
+$("validate").addEventListener("click", ()=>{
+  const r = refreshQuestionsFromEditor();
+  if (r.ok) setMsg("ok", "JSON検証OK：" + r.msg);
+  else setMsg("warn", "JSON検証NG：" + r.msg);
+});
+
+$("saveJson").addEventListener("click", ()=>{
+  const raw = $("jsonEditor").value;
+  try {
+    const obj = JSON.parse(raw);
+    const v = validateQuestionsObj(obj);
+    if (!v.ok){ setMsg("warn", "保存できません：" + v.msg); return; }
+    saveQuestionsRaw(raw);
+    QUESTIONS = obj.questions;
+    $("qCount").textContent = String(QUESTIONS.length);
+    setMsg("ok", "保存しました。反映済み：" + v.msg);
+  } catch {
+    setMsg("warn", "保存できません：JSONの構文エラーです。");
+  }
+});
+
+$("resetJson").addEventListener("click", ()=>{
+  resetQuestionsToDefault();
+  $("jsonEditor").value = JSON.stringify(DEFAULT_QUESTIONS_OBJ, null, 2);
+  const r = refreshQuestionsFromEditor();
+  if (r.ok) setMsg("ok", "初期状態に戻しました：" + r.msg);
+  else setMsg("warn", r.msg);
+});
+
+/** ===== 起動 ===== */
+renderHomeStats();
+initJsonEditor();
+</script>
+</body>
+</html>
