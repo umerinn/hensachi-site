@@ -99,6 +99,8 @@
 
 <script>
 /** ===== 設定 ===== */
+window.QUESTIONS = [];
+window.DATA = { version: "", questions: [] };
 const POP_LIMIT = 200;
 const LS_SCORES = "hs_kne_scores_v3";
 const LS_QJSON  = "hs_kne_questions_v3";
@@ -197,17 +199,14 @@ function getStoredQuestionsRaw(){ return localStorage.getItem(LS_QJSON); }
 function saveQuestionsRaw(raw){ localStorage.setItem(LS_QJSON, raw); }
 function resetQuestionsToDefault(){ localStorage.removeItem(LS_QJSON); }
 
-function loadQuestionsObj(){
-  const raw = getStoredQuestionsRaw();
-  if (!raw) return DEFAULT_QUESTIONS_OBJ;
-  try {
-    const obj = JSON.parse(raw);
-    const validated = validateQuestionsObj(obj);
-    if (!validated.ok) return DEFAULT_QUESTIONS_OBJ;
-    return obj;
-  } catch {
-    return DEFAULT_QUESTIONS_OBJ;
+async function loadQuestions() {
+  const res = await fetch("questions.json", { cache: "no-store" });
+  if (!res.ok) {
+    throw new Error(`questions.json fetch failed: ${res.status}`);
   }
+  const json = await res.json();
+  window.DATA = json;
+  window.QUESTIONS = json.questions || [];
 }
 
 /** ===== バリデーション ===== */
@@ -620,20 +619,20 @@ $("resetJson").addEventListener("click", ()=>{
 
 async function initApp() {
   try {
-    await loadQuestions(); // questions.json 読み込み
+    await loadQuestions();
   } catch (e) {
-    console.error("loadQuestions failed:", e);
-    alert("問題データの読み込みに失敗しました（questions.json を確認）");
+    console.error(e);
+    alert("問題データの読み込みに失敗しました");
     return;
   }
 
-  // ここは「以前 起動時に呼んでたもの」を置く
+  // もともと起動時にあった処理を戻す
+  if (typeof init === "function") init();
+  if (typeof bindUI === "function") bindUI();
+
   renderHomeStats();
 
-  // 最初にホーム画面を見せる関数があるなら呼ぶ
-  // 例: show("home");
-  // 例: show("top");
+  if (typeof show === "function") show("home");
 }
 
-/** ===== 起動 ===== */
 initApp();
